@@ -1,0 +1,358 @@
+v
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عبود | Abood</title>
+<style>
+* {box-sizing:border-box}
+body {
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:linear-gradient(145deg,#111343,#172c80,#60277d);
+ color:white;
+ min-height:100vh;
+}
+header {
+ background:linear-gradient(110deg,#171547,#165a9d,#662b8d);
+ padding:22px 15px;
+ text-align:center;
+}
+h1 {margin:0;font-size:32px}
+header p {font-size:12px;color:#d5e8ff}
+.people {
+ display:flex;
+ justify-content:space-around;
+ align-items:center;
+ padding:20px 8px;
+}
+.person {
+ text-align:center;
+ font-size:12px;
+}
+.avatar {
+ width:55px;
+ height:55px;
+ border-radius:50%;
+ background:linear-gradient(135deg,#11d6cf,#8052e8);
+ display:grid;
+ place-items:center;
+ font-size:27px;
+ border:3px solid #64e5ff;
+ margin:auto auto 7px;
+}
+.voice {
+ text-align:center;
+ padding:20px;
+ background:#ffffff12;
+ border-radius:25px;
+ margin:10px 15px;
+}
+.mic {
+ border:0;
+ width:85px;
+ height:85px;
+ border-radius:50%;
+ font-size:40px;
+ color:white;
+ background:linear-gradient(135deg,#00d8c9,#3761e9);
+ box-shadow:0 0 30px #00eaff88;
+}
+.wave {
+ color:#39e9ed;
+ font-size:25px;
+ letter-spacing:3px;
+ margin:15px 0;
+}
+.chatbox {
+ background:#f9fbff;
+ color:#222;
+ margin:20px 10px;
+ border-radius:24px;
+ padding:15px;
+ min-height:300px;
+}
+.chatbox h3 {color:#234b9d}
+#chat {
+ height:230px;
+ overflow-y:auto;
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+}
+.message {
+ background:linear-gradient(100deg,#10b9bd,#3774e4);
+ color:white;
+ padding:12px;
+ border-radius:15px;
+ max-width:85%;
+ align-self:flex-start;
+ overflow-wrap:anywhere;
+}
+form {
+ display:flex;
+ gap:7px;
+ margin-top:12px;
+}
+input {
+ flex:1;
+ min-width:0;
+ border:1px solid #ddd;
+ border-radius:25px;
+ padding:12px;
+}
+.send {
+ border:0;
+ border-radius:50%;
+ background:#3173e5;
+ color:white;
+ width:45px;
+ font-size:20px;
+}
+footer {
+ text-align:center;
+ padding:15px;
+ font-size:12px;
+ color:#d9d9ff;
+}<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, in>
+<title>عبود | Abood</title>                           <style>
+* {box-sizing:border-box}
+body {
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:linear-gradient(145deg,#111343,#172c80,#6>
+ color:white;
+ min-height:100vh;                                    }
+header {
+ background:linear-gradient(110deg,#171547,#165a9d,#6>
+ padding:22px 15px;
+ text-align:center;
+}                                                     h1 {margin:0;font-size:32px}
+header p {font-size:12px;color:#d5e8ff}
+.people {
+ display:flex;                                         justify-content:space-around;
+ align-items:center;                                   padding:20px 8px;
+}
+.person {
+ text-align:center;
+ font-size:12px;
+}
+.avatar {
+ width:55px;
+ height:55px;
+ border-radius:50%;
+ background:linear-gradient(135deg,#11d6cf,#8052e8);
+ display:grid;
+ place-items:center;
+ font-size:27px;
+ border:3px solid #64e5ff;
+ margin:auto auto 7px;
+}
+.voice {
+ text-align:center;
+ padding:20px;
+ background:#ffffff12;
+ border-radius:25px;
+ margin:10px 15px;
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎙️ عبود</h1>
+<p>تواصل بصوتك وكتابتك بحرية</p>
+</header>
+
+<div class="people">
+ <div class="person">
+  <div class="avatar">👨</div>
+  أحمد
+ </div>
+ <div class="person">
+  <div class="avatar">👩</div>
+  سارة
+ </div>
+ <div class="person">
+  <div class="avatar">👦</div>
+  محمد
+ </div>
+</div>
+
+<section class="voice">
+ <button class="mic" type="button" id="mic">🎤</button>
+ <p>المحادثات الصوتية</p>
+ <div class="wave">▂▅▇▃▆▂▇▅▃▆</div>
+ <small id="voiceStatus">اضغط على الميكروفون</small>
+</section>
+
+<section class="chatbox">
+ <h3>💬 محادثات عبود</h3>
+ <div id="chat"></div>
+<input id="username" placeholder="اكتب اسمك..." maxlength="30">
+ <form id="form">
+  <input id="msg" placeholder="اكتب رسالتك..." required maxlength="1000">
+  <button class="send" type="submit">➤</button>
+ </form>
+</section>
+
+<footer>
+من تصميم المهندس عبد الحكيم خالد الجابري
+</footer>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const chat = document.getElementById("chat");
+const form = document.getElementById("form");
+const input = document.getElementById("msg");
+const mic = document.getElementById("mic");
+const status = document.getElementById("voiceStatus");
+
+
+function showMessage(data) {
+  if (!data) return;
+
+  const text = typeof data === "string" ? data : data.text;
+  const name = typeof data === "string" ? "عبود" : (data.name || "عبود");
+
+  if (typeof text !== "string") return;
+
+  const message = document.createElement("div");
+  message.className = "message";
+  message.textContent = name + ": " + text;
+  chat.appendChild(message);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showVoice(data) {
+  if (!data || typeof data.audio !== "string") return;
+
+  const message = document.createElement("div");
+  message.className = "message";
+
+  const label = document.createElement("div");
+  label.textContent = (data.name || "عبود") + ": 🎤 رسالة صوتية";
+
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.src = data.audio;
+  audio.style.maxWidth = "100%";
+
+  message.appendChild(label);
+  message.appendChild(audio);
+  chat.appendChild(message);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+let socket = null;
+
+if (typeof io === "function") {
+  socket = io();
+
+  socket.on("chat message", showMessage);
+
+  socket.on("chat history", function(messages) {
+    if (!Array.isArray(messages)) return;
+    chat.innerHTML = "";
+    messages.forEach(showMessage);
+  });
+
+  socket.on("voice history", function(messages) {
+    if (!Array.isArray(messages)) return;
+    messages.forEach(showVoice);
+  });
+
+  socket.on("voice message", showVoice);
+}
+
+form.addEventListener("submit", function(e) {
+ e.preventDefault();
+ const text = input.value.trim();
+if (!text) return;
+
+if (socket && socket.connected) {
+  socket.emit("chat message", {
+    name: document.getElementById("username").value.trim() || "عبود",
+    text: text
+  });
+} else {
+  showMessage(text);
+}
+
+input.value = "";
+});
+
+ 
+let recorder;
+let audioChunks = [];
+
+mic.addEventListener("click", async function() {
+  try {
+    if (recorder && recorder.state === "recording") {
+      recorder.stop();
+      status.textContent = "جاري تجهيز الصوت...";
+      return;
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia ||
+        !window.MediaRecorder) {
+      status.textContent = "التسجيل غير مدعوم هنا";
+      return;
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    });
+
+    audioChunks = [];
+    recorder = new MediaRecorder(stream);
+
+    recorder.ondataavailable = function(e) {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    recorder.onstop = function() {
+      const audioBlob = new Blob(audioChunks, {
+        type: recorder.mimeType
+      });
+
+      stream.getTracks().forEach(track => track.stop());
+
+      if (audioBlob.size > 5000000) {
+        status.textContent = "الصوت طويل جدًا، سجّل مقطعًا أقصر";
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onloadend = function() {
+        if (socket && socket.connected) {
+          socket.emit("voice message", {
+            name: document.getElementById("username").value.trim() || "عبود",
+            audio: reader.result
+          });
+          status.textContent = "تم إرسال الصوت ✅";
+        } else {
+          status.textContent = "الخادم غير متصل، لم يُرسل الصوت";
+        }
+      };
+
+      reader.readAsDataURL(audioBlob);
+    };
+
+    recorder.start();
+    status.textContent = "🔴 جاري التسجيل، اضغط للإيقاف";
+  } catch (error) {
+    status.textContent = "تعذر تشغيل الميكروفون";
+  }
+});
+
+
+</script>
+</body>
+</html>
+

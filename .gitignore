@@ -1,0 +1,10 @@
+node_modules/
+messages.json
+voice_messages/
+.env
+*.save
+*.bak
+*-backup*
+*-before*
+check.js
+client-check.js
